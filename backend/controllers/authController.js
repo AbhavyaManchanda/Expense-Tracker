@@ -12,6 +12,7 @@ export const signupUser = async (req, res) => {
                 message: "Please provide all the fields"
             });
         }
+        
         const userExist = await pool.query({
             text: `SELECT EXISTS (SELECT*FROM tbluser WHERE email = $1)`,
             values: [email],
@@ -41,6 +42,8 @@ export const signupUser = async (req, res) => {
         res.status(500).json({ status: "failed", message: error.message });
     }
 };
+
+
 
 export const signinUser = async (req, res) => {
     try {
