@@ -7,25 +7,36 @@ export const getTransactions = async (req, res) => {
 
     const _sevenDaysAgo = new Date(today);
 
-    _sevenDaysAgo.setDate(today.getDate() - 7);
+      _sevenDaysAgo.setDate(today.getDate() - 7);
+      
 
-    const sevenDaysAgo = _sevenDaysAgo.toISOString().split("T")[0];
+    const sevenDaysAgo = _sevenDaysAgo.toISOString().split("T")[0];// YYYY-MM-DD
+    // const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7)); // 7 days ago
 
-    const { df, dt, s } = req.query;
+    const { df, dt, s } = req.query; // Date filter
+    // const { s } = req.query; // Search filter
 
-    const { userId } = req.body.user;
+    const { userId } = req.body.user; // User ID from the request body
 
     const startDate = new Date(df || sevenDaysAgo);
+      
     const endDate = new Date(dt || new Date());
 
-    const transactions = await pool.query({
-      text: `SELECT * FROM tbltransaction WHERE user_id = $1 AND createdat BETWEEN $2 AND $3 AND (description ILIKE '%' || $4 || '%' OR status ILIKE '%' || $4 || '%' OR source ILIKE '%' || $4 || '%') ORDER BY id DESC`,
+      const transactions = await pool.query({//here we are using pool.query to get the transactions from the database
+        
+          text: `SELECT * FROM tbltransaction WHERE user_id = $1 AND createdat BETWEEN $2 AND $3 AND (description ILIKE '%' || $4 || '%' OR status ILIKE '%' || $4 || '%' OR source ILIKE '%' || $4 || '%') ORDER BY id DESC`,
+          
+        //we are using ILIKE to make the search case insensitive
+        //using $1, $2, $3, $4 to prevent SQL injection
+        //description, status, source are the columns we are searching for
+          // || is used to concatenate the string with the % sign to make the search more flexible
+          
       values: [userId, startDate, endDate, s],
     });
 
     res.status(200).json({
       status: "success",
-      data: transactions.rows,
+      data: transactions.rows,  
     });
   } catch (error) {
     console.log(error);
@@ -45,7 +56,7 @@ export const getDashboardInformation = async (req, res) => {
     const transactionsResult = await pool.query({
       text: `SELECT type, SUM(amount) AS totalAmount FROM 
     tbltransaction WHERE user_id = $1 GROUP BY type`,
-      values: [userId],
+      values: [userId],//fetching the transactions data from the database
     });
 
     const transactions = transactionsResult.rows;
@@ -82,17 +93,18 @@ export const getDashboardInformation = async (req, res) => {
     });
 
     //   organise data
-
+    //we are using the map function to create an array of objects with the month name and the total amount for each month
+    //we are using the filter function to get the income and expense for each month
     const data = new Array(12).fill().map((_, index) => {
       const monthData = result.rows.filter(
         (item) => parseInt(item.month) === index + 1
       );
 
       const income =
-        monthData.find((item) => item.type === "income")?.totalamount || 0;
+        monthData.find((item) => item.type === "income")?.totalamount || 0;//finding the income for each month
 
       const expense =
-        monthData.find((item) => item.type === "expense")?.totalamount || 0;
+        monthData.find((item) => item.type === "expense")?.totalamount || 0;//finding the expense for each month
 
       return {
         label: getMonthName(index),
@@ -175,19 +187,22 @@ export const addTransaction = async (req, res) => {
     }
 
     // Begin Transaction
-    await pool.query("BEGIN");
+      await pool.query("BEGIN");
+      
 
     await pool.query({
       text: `UPDATE tblaccount SET account_balance = account_balance - $1, updatedat = CURRENT_TIMESTAMP WHERE id = $2`,
       values: [amount, account_id],
-    });
+    });//here we are updating the account balance in the database
+      
 
     await pool.query({
       text: `INSERT INTO tbltransaction(user_id, description, type, status, amount, source) VALUES($1, $2, $3, $4, $5, $6)`,
       values: [userId, description, "expense", "Completed", amount, source],
-    });
+    });//here we are inserting the transaction into the database
+      
 
-    await pool.query("COMMIT");
+    await pool.query("COMMIT"); //we are using commit to save the changes in the database if all the queries are successful
 
     res.status(200).json({
       status: "success",
@@ -254,7 +269,8 @@ export const transferMoneyToAccount = async (req, res) => {
       values: [newAmount, from_account],
     });
 
-    // Transfer to account
+      // Transfer to account
+      //here we are updating the account balance in the database
     const toAccount = await pool.query({
       text: `UPDATE tblaccount SET account_balance = account_balance + $1, updatedat = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
       values: [newAmount, to_account],
@@ -273,9 +289,9 @@ export const transferMoneyToAccount = async (req, res) => {
         amount,
         fromAccount.account_name,
       ],
-    });
+    });//insert transaction record for the from account
 
-    const description1 = `Received (${fromAccount.account_name} - ${toAccount.rows[0].account_name})`;
+    const description1 = `Received (${fromAccount.account_name} - ${toAccount.rows[0].account_name})`;//here we are using the account name of the from account and to account to make the description more meaningful
 
     await pool.query({
       text: `INSERT INTO tbltransaction(user_id, description, type, status, amount, source) VALUES($1, $2, $3, $4, $5, $6)`,
@@ -287,7 +303,7 @@ export const transferMoneyToAccount = async (req, res) => {
         amount,
         toAccount.rows[0].account_name,
       ],
-    });
+    });//matching the transaction record for the to account
 
     // Commit transaction
     await pool.query("COMMIT");
