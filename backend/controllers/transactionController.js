@@ -7,7 +7,7 @@ export const getTransactions = async (req, res) => {
 
     const _sevenDaysAgo = new Date(today);
 
-      _sevenDaysAgo.setDate(today.getDate() - 7);
+    _sevenDaysAgo.setDate(today.getDate() - 7);
       
 
     const sevenDaysAgo = _sevenDaysAgo.toISOString().split("T")[0];// YYYY-MM-DD
@@ -60,7 +60,9 @@ export const getDashboardInformation = async (req, res) => {
     });
 
     const transactions = transactionsResult.rows;
+    //result.rows is an array of objects with the type and total amount for each type
 
+    //we are using the forEach loop to iterate through the transactions array and calculate the total income and expense
     transactions.forEach((transaction) => {
       if (transaction.type === "income") {
         totalIncome += transaction.totalamount;
@@ -69,7 +71,7 @@ export const getDashboardInformation = async (req, res) => {
       }
     });
 
-    const availableBalance = totalIncome - totalExpense;
+    const availableBalance = totalIncome - totalExpense;//calculating the available balance by subtracting the total expense from the total income
 
     // Aggregate transactions to sum by type and group by month
     const year = new Date().getFullYear();
