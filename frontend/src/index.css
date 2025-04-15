@@ -1,0 +1,28 @@
+/* Define your CSS variables in the root element */
+:root {
+    --primary: 233, 94%, 61%;
+    --primary-foreground: 0, 0%, 100%;
+    --secondary: 45, 90%, 60%;
+    --secondary-foreground: 0, 0%, 100%;
+    --background: 0, 0%, 98%;
+    --foreground: 0, 0%, 10%;
+    --border: 0, 0%, 80%;
+    --input: 0, 0%, 90%;
+    --ring: 0, 0%, 100%;
+    --destructive: 358, 78%, 61%;
+    --destructive-foreground: 0, 0%, 100%;
+    --muted: 0, 0%, 50%;
+    --muted-foreground: 0, 0%, 90%;
+    --accent: 210, 100%, 60%;
+    --accent-foreground: 0, 0%, 100%;
+    --popover: 0, 0%, 100%;
+    --popover-foreground: 0, 0%, 50%;
+    --card: 0, 0%, 100%;
+    --card-foreground: 0, 0%, 10%;
+  }
+  
+  /* Tailwind base, components, and utilities layers */
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+  
