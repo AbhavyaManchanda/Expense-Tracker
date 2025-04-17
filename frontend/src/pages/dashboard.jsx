@@ -59,7 +59,12 @@ const DashBoard = () => {
             }}
           />
         )}
-      </div>
+        </div>
+        
+        <div className="flex flex-col-reverse gap-0 mt-10 md:flex-row 2xl:gap-20">
+          <RecentTransaction data={data?.lastTransactions} />
+           {data?.lastAccount?.length>0 && <Accounts data={data?.lastAccount} />}
+          </div>
       </div>
     
   }
