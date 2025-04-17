@@ -32,8 +32,15 @@ const RootLayout = () => {
 
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const {theme} = useStore((state) => state);
+  useEffect(() => {
+    if (theme==="dark") {
+      document.body.classList.add(theme);
+    } else {
+      document.body.classList.remove("dark");
+      
+    }
+  }, [theme]);
   return (
   <main>
       <div className="w-full min-h-screen px-6 bg-gray-100 md:px-20 dark:bg-slate-900">
