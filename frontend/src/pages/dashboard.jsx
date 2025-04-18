@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Loading from '../components/loading';
-// import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import api from '../libs/apiCall'; // Assuming api is correctly imported
 import Info from '../components/info';
 import Stats from '../components/wrappers/stats';
