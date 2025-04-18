@@ -4,7 +4,7 @@ import { GiCash } from "react-icons/gi";
 import { RiVisaLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 
-import { formatCurrency, maskAccountNumber } from "../..//libs";
+import { formatCurrency, maskAccountNumber } from "../libs";
 import Title from "./title";
 
 const ICONS = {
@@ -75,3 +75,5 @@ const Accounts = ({ data }) => {
     </div>
   );
 };
+
+export default Accounts;

@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import Title from "../title";
+import Title from "./title";
 
 export const Chart = ({ data }) => {
   return (

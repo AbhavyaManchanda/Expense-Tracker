@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Loading from '../components/loading';
-import { toast } from 'react-toastify';
-import api from '../libs/apiCalls'; // Assuming api is correctly imported
+// import { toast } from 'react-toastify';
+import api from '../libs/apiCall'; // Assuming api is correctly imported
 import Info from '../components/info';
-import Stats from '../components/stats';
+import Stats from '../components/wrappers/stats';
 import Chart from '../components/chart';
 import DoughnutChart from '../components/piechart';
 import RecentTransaction from '../components/recent-transactions';
